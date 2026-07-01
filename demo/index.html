@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Adaptive WCAG — Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 680px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      line-height: 1.5;
+    }
+    .fake-carousel {
+      background: linear-gradient(90deg, #ffb703, #fb8500);
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      animation: pulse 1s infinite alternate;
+    }
+    @keyframes pulse {
+      from { opacity: 1; }
+      to { opacity: 0.6; }
+    }
+    button.demo-btn {
+      padding: 0.4rem 0.8rem;
+      margin-top: 1rem;
+    }
+    #event-log {
+      background: #f4f4f4;
+      padding: 0.75rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      border-radius: 0.5rem;
+      min-height: 4rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Adaptive WCAG — Demo page</h1>
+  <p>
+    This page exists only to validate that the engine's adaptations render
+    correctly on real content. Click the floating button in the bottom-right
+    corner and toggle a profile — or use the buttons below to drive the API
+    directly.
+  </p>
+
+  <div class="fake-carousel" aria-hidden="true">
+    A decorative, constantly animating banner — this is exactly what the
+    Autism profile should freeze.
+  </div>
+
+  <p>
+    Some body text with several sentences to check line-height, letter
+    spacing and paragraph width once the Dyslexia profile is active. Lorem
+    ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+    incididunt ut labore et dolore magna aliqua.
+  </p>
+
+  <button class="demo-btn" id="btn-dyslexia">Toggle dyslexia</button>
+  <button class="demo-btn" id="btn-low-vision">Toggle low vision</button>
+  <button class="demo-btn" id="btn-autism">Toggle autism</button>
+  <button class="demo-btn" id="btn-open-panel">Open panel via API</button>
+
+  <h2>Event log</h2>
+  <div id="event-log"></div>
+
+  <script src="/dist/adaptive-wcag.min.js"></script>
+  <script>
+    AdaptiveWCAG.init();
+
+    const log = document.getElementById('event-log');
+    const append = (line) => {
+      log.textContent += line + '\n';
+    };
+
+    AdaptiveWCAG.on('profileEnabled', (p) => append(`profileEnabled: ${p.profileId}`));
+    AdaptiveWCAG.on('profileDisabled', (p) => append(`profileDisabled: ${p.profileId}`));
+    AdaptiveWCAG.on('updated', (p) => append(`updated: [${p.activeProfiles.join(', ')}]`));
+
+    document.getElementById('btn-dyslexia').addEventListener('click', () => {
+      AdaptiveWCAG.getProfiles().includes('dyslexia')
+        ? AdaptiveWCAG.disable('dyslexia')
+        : AdaptiveWCAG.enable('dyslexia');
+    });
+    document.getElementById('btn-low-vision').addEventListener('click', () => {
+      AdaptiveWCAG.getProfiles().includes('low-vision')
+        ? AdaptiveWCAG.disable('low-vision')
+        : AdaptiveWCAG.enable('low-vision');
+    });
+    document.getElementById('btn-autism').addEventListener('click', () => {
+      AdaptiveWCAG.getProfiles().includes('autism')
+        ? AdaptiveWCAG.disable('autism')
+        : AdaptiveWCAG.enable('autism');
+    });
+    document.getElementById('btn-open-panel').addEventListener('click', () => {
+      AdaptiveWCAG.open();
+    });
+  </script>
+</body>
+</html>
