@@ -1,6 +1,7 @@
 import type { EventBus } from '../core/EventBus';
 import type { ProfileManager } from '../core/ProfileManager';
-import { CATEGORY_LABELS, type Profile, type ProfileCategory } from '../core/types';
+import type { Profile, ProfileCategory } from '../core/types';
+import { getUiStrings, translateProfile, type Locale, type UiStrings } from '../i18n';
 
 const CATEGORY_ORDER: ProfileCategory[] = ['vision', 'reading', 'cognitive', 'motor', 'hearing', 'sensory', 'aging'];
 
@@ -123,12 +124,15 @@ export class Panel {
   private isOpen = false;
   private lastFocused: HTMLElement | null = null;
   private unsubscribe: () => void;
+  private strings: UiStrings;
 
   constructor(
     private manager: ProfileManager,
     private events: EventBus,
     container: Element | ShadowRoot = document.body,
+    private locale: Locale = 'en',
   ) {
+    this.strings = getUiStrings(locale);
     this.host = document.createElement('div');
     this.shadow = this.host.attachShadow({ mode: 'open' });
 
@@ -153,7 +157,7 @@ export class Panel {
     button.className = 'awcag-toggle';
     button.setAttribute('aria-haspopup', 'dialog');
     button.setAttribute('aria-expanded', 'false');
-    button.setAttribute('aria-label', 'Open accessibility settings');
+    button.setAttribute('aria-label', this.strings.toggleOpenLabel);
     button.textContent = '♿';
     button.addEventListener('click', () => this.toggle());
     return button;
@@ -170,14 +174,14 @@ export class Panel {
     const closeButton = document.createElement('button');
     closeButton.type = 'button';
     closeButton.className = 'awcag-close';
-    closeButton.setAttribute('aria-label', 'Close accessibility settings');
+    closeButton.setAttribute('aria-label', this.strings.toggleCloseLabel);
     closeButton.textContent = '✕';
     closeButton.addEventListener('click', () => this.close());
     panel.appendChild(closeButton);
 
     const title = document.createElement('h2');
     title.id = 'awcag-panel-title';
-    title.textContent = 'Accessibility needs';
+    title.textContent = this.strings.panelTitle;
     panel.appendChild(title);
 
     const byCategory = new Map<ProfileCategory, Profile[]>();
@@ -200,7 +204,7 @@ export class Panel {
     fieldset.className = 'awcag-category';
 
     const legend = document.createElement('legend');
-    legend.textContent = CATEGORY_LABELS[category];
+    legend.textContent = this.strings.categoryLabels[category];
     fieldset.appendChild(legend);
 
     for (const profile of profiles) {
@@ -210,7 +214,7 @@ export class Panel {
     return fieldset;
   }
 
-  private buildProfileRow(profile: { id: string; label: string; description: string }): HTMLDivElement {
+  private buildProfileRow(profile: Profile): HTMLDivElement {
     const row = document.createElement('div');
     row.className = 'awcag-profile';
 
@@ -222,12 +226,13 @@ export class Panel {
     checkbox.addEventListener('change', () => this.manager.toggle(profile.id));
     this.checkboxes.set(profile.id, checkbox);
 
+    const text = translateProfile(this.locale, profile);
     const textWrap = document.createElement('div');
     const label = document.createElement('label');
     label.setAttribute('for', checkboxId);
-    label.textContent = profile.label;
+    label.textContent = text.label;
     const description = document.createElement('p');
-    description.textContent = profile.description;
+    description.textContent = text.description;
     textWrap.appendChild(label);
     textWrap.appendChild(description);
 

@@ -4,7 +4,9 @@ import { LocalStorageAdapter } from './core/StorageAdapter';
 import { defaultProfiles } from './profiles';
 import { injectBaseStylesheet, removeBaseStylesheet } from './ui/base-stylesheet';
 import { Panel } from './ui/Panel';
+import { resolveLocale } from './i18n';
 import type { AdaptiveWCAGEvent, AdaptiveWCAGEventPayload, InitOptions, Profile } from './core/types';
+import type { Locale } from './i18n';
 
 class AdaptiveWCAGController {
   private manager: ProfileManager | null = null;
@@ -23,7 +25,8 @@ class AdaptiveWCAGController {
     this.manager.restore();
 
     if (options.ui !== false) {
-      this.panel = new Panel(this.manager, this.events, options.container ?? document.body);
+      const locale = resolveLocale(options.locale);
+      this.panel = new Panel(this.manager, this.events, options.container ?? document.body, locale);
     }
   }
 
@@ -83,5 +86,5 @@ class AdaptiveWCAGController {
 const AdaptiveWCAG = new AdaptiveWCAGController();
 
 export default AdaptiveWCAG;
-export { ProfileManager, EventBus, LocalStorageAdapter, defaultProfiles };
-export type { Profile, InitOptions, AdaptiveWCAGEvent, AdaptiveWCAGEventPayload };
+export { ProfileManager, EventBus, LocalStorageAdapter, defaultProfiles, resolveLocale };
+export type { Profile, InitOptions, AdaptiveWCAGEvent, AdaptiveWCAGEventPayload, Locale };
