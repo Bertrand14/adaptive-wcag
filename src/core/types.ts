@@ -1,3 +1,5 @@
+import type { Locale } from '../i18n/types';
+
 /**
  * Priority tiers used to resolve conflicts when two active profiles
  * disagree on the value of the same adaptation.
@@ -88,4 +90,9 @@ export interface InitOptions {
   storageKey?: string;
   profiles?: Profile[];
   container?: Element | ShadowRoot;
+  /**
+   * UI language. `'auto'` (the default) reads `navigator.language` and
+   * falls back to English for anything we don't ship strings for.
+   */
+  locale?: Locale | 'auto';
 }

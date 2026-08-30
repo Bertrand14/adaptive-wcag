@@ -1,7 +1,7 @@
 # TODO
 
 ## À court terme
-- Publier la bibliothèque sur npm ou un registre privé.
+- Publier la bibliothèque sur npm ou un registre privé. (En attendant : installable via dépendance git grâce au script `prepare`, ou en auto-hébergeant `dist/adaptive-wcag.min.js` — voir README.)
 - Ajouter des wrappers officiels pour React et Vue.
 - Préparer une démo plus complète et documentée.
 
