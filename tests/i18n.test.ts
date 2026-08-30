@@ -33,8 +33,8 @@ describe('i18n', () => {
       for (const id of ids) {
         const entry = PROFILE_TRANSLATIONS[locale][id];
         expect(entry, `${locale} is missing a translation for "${id}"`).toBeDefined();
-        expect(entry.label.length).toBeGreaterThan(0);
-        expect(entry.description.length).toBeGreaterThan(0);
+        expect(entry!.label.length).toBeGreaterThan(0);
+        expect(entry!.description.length).toBeGreaterThan(0);
       }
     }
   });
