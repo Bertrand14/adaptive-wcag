@@ -21,11 +21,15 @@ Instead of exposing dozens of technical toggles (font size, contrast, spacing...
 
 ## How to install
 
-### Option A — npm / bundler
+This is not yet published to npm or a public CDN. Until it is, use one of the two options below.
+
+### Option A — git dependency (bundler projects: Vite, webpack, Next, ...)
 
 ```bash
-npm install adaptive-wcag
+npm install git+https://github.com/Bertrand14/adaptive-wcag.git
 ```
+
+`dist/` is gitignored in this repo (it's a build artifact, not source), so installing straight from GitHub would normally leave you without the files `main`/`module`/`types` point to. The `prepare` script (`package.json`) covers this automatically: npm runs it right after installing a git dependency, which builds `dist/` in place inside `node_modules/adaptive-wcag`. Nothing extra to run — `npm install` is enough.
 
 ```js
 import AdaptiveWCAG from 'adaptive-wcag';
@@ -33,9 +37,11 @@ import AdaptiveWCAG from 'adaptive-wcag';
 AdaptiveWCAG.init();
 ```
 
-### Option B — plain HTML / script tag
+Pin to a commit or tag for reproducible installs: `git+https://github.com/Bertrand14/adaptive-wcag.git#<commit-or-tag>`.
 
-Build the library first, then point a `<script>` tag at the generated bundle:
+### Option B — self-hosted script tag (no build step / static sites)
+
+Build the library, then copy the generated bundle into your own site (e.g. `public/vendor/adaptive-wcag.min.js`) and serve it from there — don't point at this repo's checkout at request time:
 
 ```bash
 npm install
@@ -43,13 +49,11 @@ npm run build
 ```
 
 ```html
-<script src="/path/to/adaptive-wcag/dist/adaptive-wcag.min.js"></script>
+<script src="/vendor/adaptive-wcag.min.js"></script>
 <script>
   AdaptiveWCAG.init();
 </script>
 ```
-
-This is not yet published to a public registry or CDN — until it is, self-host `dist/adaptive-wcag.min.js` alongside your site.
 
 ### Quick start
 
@@ -77,6 +81,20 @@ useEffect(() => {
 }, []);
 ```
 
+### Following a host site's own locale switcher
+
+`init({ locale })` only resolves the language once, at startup. If your site's language can change later (a locale switcher, an Inertia/React Router locale prop, i18next's `languageChanged` event, ...), call `setLocale()` whenever that happens instead of tearing the widget down and calling `init()` again:
+
+```jsx
+const { locale } = usePage().props; // or wherever your app exposes the current locale
+
+useEffect(() => {
+  AdaptiveWCAG.setLocale(locale);
+}, [locale]);
+```
+
+Don't reach for `destroy()` + `init()` here: `destroy()` uninstalls the engine entirely, including **wiping the visitor's saved profile selection from storage** — so a naive reinit on every language switch would silently reset someone's accessibility settings each time they change the site's language. `setLocale()` exists specifically to avoid that: it only rebuilds the panel's DOM/strings and leaves the engine, active profiles, and storage alone.
+
 ---
 
 ## API reference
@@ -84,6 +102,7 @@ useEffect(() => {
 | Method | Description |
 | --- | --- |
 | `init(options?)` | Starts the engine. Idempotent — calling it twice is a no-op. `options.ui = false` disables the default panel. |
+| `setLocale(locale?)` | Switches the panel's UI language after `init()` (`'en' \| 'fr' \| 'fi' \| 'auto'`, default `'auto'`). Only rebuilds the panel — active profiles and persisted storage are untouched. No-op if `ui: false` or the resolved locale hasn't changed. |
 | `open()` / `close()` | Opens/closes the accessibility panel (throws if `ui: false`). |
 | `enable(profileId)` / `disable(profileId)` | Activates/deactivates one profile. |
 | `getProfiles()` | Returns the array of currently active profile ids. |

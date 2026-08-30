@@ -305,6 +305,10 @@ export class Panel {
     else this.open();
   }
 
+  get opened(): boolean {
+    return this.isOpen;
+  }
+
   destroy(): void {
     this.unsubscribe();
     this.host.remove();
