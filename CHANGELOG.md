@@ -15,6 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Full documentation suite: `API.md`, `ARCHITECTURE.md`, `INSTALL.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `ROADMAP.md`, `DEPLOYMENT.md`, `LICENSE` — `README.md` trimmed down to an entry point linking out to these
 
 ### Changed
+- Panel profile checkboxes are now styled as toggle switches with `role="switch"` (assistive tech announces on/off); still native `<input type="checkbox">`, so keyboard handling is unchanged, and transitions are disabled under `prefers-reduced-motion`
 - Local work-in-progress notes (`TODO.md`, `FIXME.md`) moved out of git into a gitignored `documents/` directory; `TODO.md`'s public-facing items now live in [ROADMAP.md](ROADMAP.md) instead
 
 ---
