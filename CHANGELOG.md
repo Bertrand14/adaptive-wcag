@@ -8,6 +8,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `AdaptiveWCAG.loadDyslexiaFont(url?)` — loads OpenDyslexic (jsDelivr by default, or your own self-hosted stylesheet) so the Dyslexia profile's font swap actually renders instead of silently falling back to `Comic Sans MS`/sans-serif; opt-in since it's the only thing the library would otherwise fetch from a third party (see [API.md](API.md#loaddyslexiafonturl))
 - Internationalisation: English/French/Finnish UI strings and profile translations, resolved from `navigator.language` (`resolveLocale()`, `getUiStrings()`, `translateProfile()` — see [ARCHITECTURE.md](ARCHITECTURE.md#internationalisation))
 - `AdaptiveWCAG.setLocale(locale?)` — switches the panel's UI language after `init()` without resetting active profiles or persisted storage, for sites whose own locale can change after load (see [API.md](API.md#setlocalelocale))
 - Git-dependency install path: a `prepare` script builds `dist/` automatically when installed via `npm install git+https://...`, ahead of an eventual npm publish (see [INSTALL.md](INSTALL.md))

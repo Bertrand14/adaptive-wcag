@@ -70,6 +70,7 @@
   <script src="/dist/adaptive-wcag.min.js"></script>
   <script>
     AdaptiveWCAG.init();
+    AdaptiveWCAG.loadDyslexiaFont(); // otherwise the Dyslexia profile's font swap has nothing to fall forward to
 
     const log = document.getElementById('event-log');
     const append = (line) => {

@@ -16,6 +16,7 @@ import AdaptiveWCAG from 'adaptive-wcag';
 | `enable(profileId)` / `disable(profileId)` | Activates/deactivates one profile by id. |
 | `getProfiles()` | Returns the array of currently active profile ids. |
 | [`on(event, handler)`](#events) | Subscribes to `'profileEnabled'`, `'profileDisabled'`, or `'updated'`. Returns an unsubscribe function. |
+| [`loadDyslexiaFont(url?)`](#loaddyslexiafonturl) | Loads OpenDyslexic so the Dyslexia profile's font swap actually renders. |
 | [`destroy()`](#destroy) | Uninstalls the engine — see below. |
 
 ### `init(options?)`
@@ -51,6 +52,17 @@ AdaptiveWCAG.on('profileDisabled', ({ profileId }) => { ... });
 | `updated` | `{ activeProfiles: string[] }` | After every enable/disable/restore/uninstall — the full active set. |
 | `profileEnabled` | `{ profileId: string }` | When a specific profile turns on. |
 | `profileDisabled` | `{ profileId: string }` | When a specific profile turns off. |
+
+### `loadDyslexiaFont(url?)`
+
+```js
+AdaptiveWCAG.loadDyslexiaFont();                         // default: jsDelivr's @fontsource/opendyslexic CSS
+AdaptiveWCAG.loadDyslexiaFont('/fonts/opendyslexic.css'); // your own self-hosted stylesheet
+```
+
+The Dyslexia profile sets `--awcag-font-family` to `'OpenDyslexic', 'Comic Sans MS', sans-serif`, but no browser ships OpenDyslexic — without this call it silently falls back to `Comic Sans MS` (rarely installed outside Windows) and then plain sans-serif, so the profile's most visible adaptation can render as a no-op.
+
+This is deliberately **not** called by `init()`: it's the one thing this library would otherwise do that makes a third-party network request (jsDelivr, by default) on your visitors' behalf, which can also violate a strict CSP. Call it explicitly once, anywhere after your page loads — before or after `init()`, order doesn't matter — or pass your own self-hosted URL to a stylesheet containing `@font-face { font-family: 'OpenDyslexic'; ... }` rules if the default CDN isn't acceptable. Idempotent; `destroy()` removes it.
 
 ### `destroy()`
 
