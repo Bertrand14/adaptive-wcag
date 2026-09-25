@@ -93,10 +93,44 @@ const PANEL_STYLESHEET = `
 .awcag-profile:first-of-type {
   border-top: none;
 }
-.awcag-profile input {
-  margin-top: 0.2rem;
-  width: 1.1rem;
-  height: 1.1rem;
+.awcag-profile input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  width: 2.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  border: 2px solid #1a1a1a;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.awcag-profile input[type='checkbox']::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: #1a1a1a;
+  transition: transform 0.15s ease;
+}
+.awcag-profile input[type='checkbox']:checked {
+  background: #0b63ce;
+  border-color: #0b63ce;
+}
+.awcag-profile input[type='checkbox']:checked::before {
+  background: #ffffff;
+  transform: translateX(1rem);
+}
+@media (prefers-reduced-motion: reduce) {
+  .awcag-profile input[type='checkbox'],
+  .awcag-profile input[type='checkbox']::before {
+    transition: none;
+  }
 }
 .awcag-profile label {
   font-weight: 600;
@@ -222,6 +256,12 @@ export class Panel {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.id = checkboxId;
+    // Styled as a toggle switch (see PANEL_STYLESHEET); role="switch"
+    // makes assistive tech announce on/off instead of checked/unchecked
+    // to match. Still a real <input type="checkbox">, so native keyboard
+    // handling (Space) and the browser's own checked-state reporting to
+    // the accessibility tree keep working unchanged.
+    checkbox.setAttribute('role', 'switch');
     checkbox.checked = this.manager.isActive(profile.id);
     checkbox.addEventListener('change', () => this.manager.toggle(profile.id));
     this.checkboxes.set(profile.id, checkbox);
