@@ -7,6 +7,11 @@ export const dyslexiaProfile: Profile = {
   category: 'reading',
   htmlAttribute: 'data-awcag-dyslexia',
   rules: [
+    // OpenDyslexic isn't a font any browser ships, so this falls through
+    // to 'Comic Sans MS' (rarely installed outside Windows) and then
+    // plain sans-serif unless the host page has actually loaded it —
+    // call AdaptiveWCAG.loadDyslexiaFont() to do that (see
+    // src/ui/dyslexia-font.ts for why it isn't automatic).
     { cssVar: '--awcag-font-family', value: "'OpenDyslexic', 'Comic Sans MS', sans-serif", tier: 'readability' },
     { cssVar: '--awcag-letter-spacing', value: '0.12em', tier: 'readability' },
     { cssVar: '--awcag-word-spacing', value: '0.16em', tier: 'readability' },

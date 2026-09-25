@@ -3,6 +3,7 @@ import { EventBus } from './core/EventBus';
 import { LocalStorageAdapter } from './core/StorageAdapter';
 import { defaultProfiles } from './profiles';
 import { injectBaseStylesheet, removeBaseStylesheet } from './ui/base-stylesheet';
+import { loadDyslexiaFont, removeDyslexiaFont } from './ui/dyslexia-font';
 import { Panel } from './ui/Panel';
 import { resolveLocale } from './i18n';
 import type { AdaptiveWCAGEvent, AdaptiveWCAGEventPayload, InitOptions, Profile } from './core/types';
@@ -68,7 +69,22 @@ class AdaptiveWCAGController {
     this.panel?.destroy();
     this.panel = null;
     removeBaseStylesheet();
+    removeDyslexiaFont();
     this.manager = null;
+  }
+
+  /**
+   * Loads OpenDyslexic so the Dyslexia profile's --awcag-font-family
+   * rule actually renders instead of silently falling back to 'Comic
+   * Sans MS'/sans-serif (see src/ui/dyslexia-font.ts). Not called by
+   * init() automatically — this is the one place the library would
+   * otherwise make a third-party network request on your visitors'
+   * behalf, so it stays opt-in. Pass your own self-hosted stylesheet
+   * URL instead of the default jsDelivr CDN if that fits your CSP
+   * better. Safe to call before or after init(); idempotent.
+   */
+  loadDyslexiaFont(url?: string): void {
+    loadDyslexiaFont(url);
   }
 
   private requireManager(): ProfileManager {
